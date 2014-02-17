@@ -177,7 +177,7 @@ runTest_VBR()
 		--codec=vp9 		\
 		--cpu-used=${CPUUSed}   \
 		--psnr	--verbose	\
-		--good --cpu-used=1     \
+		--good		        \
 		--end-usage=vbr		\
 		--passes=1  --limit=100	\
 		--fps=10/1		\
