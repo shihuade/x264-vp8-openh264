@@ -128,8 +128,8 @@ runGetPerformanceInfo()
 
 	done <${PerformanceLogFile}
 
-	echo "${BitRate}, ${FPS},                \
-	      ${PSNROverAll}, ${PSNRAverage}, ${PSNRY}" 
+	echo "${BitRate},${FPS},${PSNROverAll},${PSNRAverage},${PSNRY}" 
+	      
 
 
 }
@@ -496,6 +496,66 @@ runMain_VBR()
 	done
 
 }
+
+#usage  runMain_VBR  
+runMain_CQ()
+{
+
+	echo ""
+	echo "vp9 CQ test....."
+	echo ""
+
+	local MaxKeyFrameD=9999
+	local AllPerformFile="VP9Perform_VBR.csv"
+	declare -a aCQLevel
+	declare -a aTargetBitRate 
+	declare -a aTestYUVSet
+	declare -a aCPUUsed
+	aCPUUsed=(0 1 2)
+	aCQLevel=(10 20 30 40 50)
+	aTargetBitRate=(256 512 768 1024 1536)
+	aTestYUVSet=(BasketballDrillText_832x480_noDuplicate.yuv ) #   \
+		  #CiscoVT_2people_640x384_25fps_900.yuv         \
+		  #foreman_352x288_30                            \
+		  #src_pic_in_enc_1440x912_DOC.yuv )
+
+	local TestSetPath="/opt/VideoTest/YUV"
+
+	local TestYUV=""
+	local OutputFile=""
+
+	#inital perfermance file
+	echo "YUV, EncParm, CPUUsed,BitRate(B), FPS, PSNR_OverAll, PSNR_Average, PSNR_Y">${AllPerformFile}
+
+	echo ""
+	echo "VBR --good Test....">>${AllPerformFile}
+	echo "">>${AllPerformFile}
+
+
+
+	for YUV in ${aTestYUVSet[@]}
+	do
+		for TargetBitRate in ${aTargetBitRate[@]}
+		do
+			for CPUUsed in ${aCPUUsed[@]}
+			do
+				OutputFile="${YUV}_Target_${TargetBitRate}_CPU_${CPUUsed}.vp9"
+				echo "input file is ${YUV}"
+				echo "output file is ${OutputFile}"
+				echo "max key frame distance is ${MaxKeyFrameD}"
+				echo "target bitrate is ${TargetBitRate}"
+
+				runTest_VBR  "${TestSetPath}/${YUV}"  ${OutputFile}  ${TargetBitRate} ${MaxKeyFrameD} ${CPUUsed} ${AllPerformFile} 		
+
+			done
+
+		done	
+		
+
+	done
+
+}
+
 
 #**************************************************
 #call main function
