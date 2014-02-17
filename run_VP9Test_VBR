@@ -136,7 +136,7 @@ runGetPerformanceInfo()
 
 
 #usage
-#runControlBRModTest ${InputYUV} ${OutputFile}  ${TargetBR} ${MaxKeyFrameD}  ${CPUUsed} ${DataFile}
+#runTest_VBR ${InputYUV} ${OutputFile}  ${TargetBR} ${MaxKeyFrameD}  ${CPUUsed} ${DataFile}
 runTest_VBR()
 {
 
