@@ -210,7 +210,7 @@ runMain_CQ()
 	echo ""
 
 	local MaxKeyFrameD=9999
-	local AllPerformFile="VP9Perform_VBR.csv"
+	local AllPerformFile="VP9Perform_CQ.csv"
 	declare -a aCQLevel
 	declare -a aTargetBitRate 
 	declare -a aTestYUVSet
