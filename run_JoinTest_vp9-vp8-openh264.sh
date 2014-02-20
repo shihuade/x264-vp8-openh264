@@ -234,7 +234,7 @@ runTest_VBR()
 		--cpu-used=0 	        \
 		--psnr	--verbose	\
 		--good 	--tune=psnr	\
-		--passes=1  --limit=5	\
+		--passes=1  --limit=150	\
 		--fps=10/1		\
 		--min-q=0 --max-q=63	\
 		--target-bitrate=${TargetBR} \
@@ -290,14 +290,14 @@ runTest_VBR_VP8()
 		--cpu-used=0 	        \
 		--psnr	--verbose	\
 		--good 	--tune=psnr	\
-		--passes=1  --limit=5	\
+		--passes=1  --limit=150	\
 		--fps=10/1		\
 		--min-q=0 --max-q=63	\
 		--target-bitrate=${TargetBR} \
 		--kf-max-dist=${MaxKeyFrameD}"
 
 	echo ${EncoderCommand}
-	./vpxenc ${EncoderCommand} 2 >${LogFile}
+	./vpxenc ${EncoderCommand} 2>${LogFile}
 
 }
 
@@ -341,8 +341,6 @@ runTest_openh264()
 				-rc 1  -ltarb 0 ${TargetBR}"
 	
 				
-
-
 	echo "input yuv is ${InputYUV}"
 	echo "Target BitRate is ${TargetBR} "
 	echo ""
@@ -450,6 +448,7 @@ runMain_JoinTest()
 			Openh264PerforInfo=`runGetPerformanceInfo_openh264   ${LogFile}`
 
 			echo "${YUV}, ${TargetBitRate}, ,${VP9PerforInfo_VBR}, ,${VP8PerforInfo_VBR}, ,${Openh264PerforInfo}">>${AllPerformFile}
+
 		done	
 		
 	done
