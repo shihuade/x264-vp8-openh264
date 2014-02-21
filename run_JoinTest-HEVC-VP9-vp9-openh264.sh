@@ -298,7 +298,7 @@ runTest_VBR_VP9()
 		--cpu-used=0 	        \
 		--psnr	--verbose	\
 		--good 	--tune=psnr	\
-		--passes=1  --limit=3	\
+		--passes=1  --limit=10	\
 		--fps=${FPS}/1		\
 		--min-q=0 --max-q=63	\
 		--target-bitrate=${TargetBR} \
@@ -357,7 +357,7 @@ runTest_VBR_VP8()
 		--cpu-used=0 	        \
 		--psnr	--verbose	\
 		--good 	--tune=psnr	\
-		--passes=1  --limit=3	\
+		--passes=1  --limit=10	\
 		--fps=${FPS}/1		\
 		--min-q=0 --max-q=63	\
 		--target-bitrate=${TargetBR} \
@@ -462,7 +462,7 @@ runTest_HEVC()
 				-b ${OutputFile}  \
 				-o ${RecFile}	  \
 				-wdt ${PicW} -hgt ${PicH}  \
-				-fr ${FPS} -f 5 \
+				-fr ${FPS} -f 10 \
 				-q ${QP}"
 	
 				
