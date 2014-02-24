@@ -109,9 +109,9 @@ runGetPerformanceInfo_VP9()
 		if [[ $line =~ "b/s"  ]]
 		then
 			#line looks like : ... Pass 1/1 frame ... Pass 1/1 frame   10/10     69355B   55484b/f 1664520b/s   19536 ms (0.51 fps)
-			BitRate=`echo $line | awk 'BEGIN {FS="frame"} {print $NF}'` #10/10     69355B   55484b/f 1664520b/s   19536 ms (0.51 fps)
-			BitRate=`echo $BitRate | awk 'BEGIN {FS="B"}{print $1}'`   #10/10     69355 
-			BitRate=`echo $BitRate | awk '{print $2}'`                 #69355
+			BitRate=`echo $line | awk 'BEGIN {FS="frame"} {print $NF}'`  #10/10     69355B   55484b/f 1664520b/s   19536 ms (0.51 fps)
+			BitRate=`echo $BitRate | awk 'BEGIN {FS="b/f"}{print $2}'`   #1664520b/s   19536 ms (0.51 fps)
+			BitRate=`echo $BitRate | awk 'BEGIN {FS="b/s"}{print $1}'`   #1664520
 
 			FPS=`echo $line | awk 'BEGIN {FS="("} {print $2}'` 
 			FPS=`echo $FPS | awk '{print $1}'`
@@ -254,7 +254,7 @@ runGetPerformanceInfo_HM()
 
 
 #usage
-#runTest_VBR  ${InputYUV}  ${OutputFile}   ${TargetBR} ${MaxKeyFrameD}   ${LogFile} 
+#runTest_VBR_VP9  ${InputYUV}  ${OutputFile}   ${TargetBR} ${MaxKeyFrameD}   ${LogFile} 
 runTest_VBR_VP9()
 {
 
@@ -298,7 +298,7 @@ runTest_VBR_VP9()
 		--cpu-used=0 	        \
 		--psnr	--verbose	\
 		--good 	--tune=psnr	\
-		--passes=1  --limit=10	\
+		--passes=1  --limit=200	\
 		--fps=${FPS}/1		\
 		--min-q=0 --max-q=63	\
 		--target-bitrate=${TargetBR} \
@@ -309,6 +309,65 @@ runTest_VBR_VP9()
 
 }
 
+#usage
+#runTest_VBR_VP9  ${InputYUV}  ${OutputFile}   ${QP} ${MaxKeyFrameD}   ${LogFile} 
+runTest_VBR_VP9_QP()
+{
+
+	if [ ! $# -eq 5 ]
+	then
+		echo "not enough parameters!"
+		echo "usage: runTest_VBR \${InputYUV} \${OutputFile}  \${TargetBR} \${MaxKeyFrameD}  \${LogFile} "
+		return 1
+	fi
+	echo ""
+	echo "vp9 encoder VBR --good  mode......"
+	echo ""
+
+	local InputYUV=$1
+	local OutputFile=$2
+	local QP=$3
+	local MaxKeyFrameD=$4
+	local LogFile=$5
+
+	local PerfINfo=""
+	echo "input yuv is ${InputYUV}"
+	echo ""
+
+	#get YUV detail info $picW $picH $FPS
+	local PicW=""
+	local PicH=""
+	local FPS=""
+	local YUVName=`runParseYUVName ${InputYUV}`
+	declare -a aYUVInfo
+
+	aYUVInfo=(`runGetYUVInfo ${InputYUV}`)
+	PicW=${aYUVInfo[0]}
+	PicH=${aYUVInfo[1]}
+	FPS=${aYUVInfo[2]}
+	
+	let "MaxQP= ${QP}+4"
+	let "MinQP= ${QP}-4"
+	local EncoderCommand=" \
+		 ${InputYUV}            \
+		-w ${PicW} -h ${PicH}   \
+		-o ${OutputFile}        \
+		--codec=vp9 		\
+		--end-usage=vbr		\
+		--cpu-used=0 	        \
+		--psnr	--verbose	\
+		--good 	--tune=psnr	\
+		--passes=1  --limit=200	\
+		--q-hist=50		\
+		--fps=${FPS}/1		\
+		--min-q=${MinQP} 	\
+		--max-q=${MaxQP}	\
+		--kf-max-dist=${MaxKeyFrameD}"
+		#--cq-level=${QP}	\
+	echo ${EncoderCommand}
+	./vpxenc ${EncoderCommand} 2>${LogFile}
+
+}
 
 
 #usage
@@ -357,7 +416,7 @@ runTest_VBR_VP8()
 		--cpu-used=0 	        \
 		--psnr	--verbose	\
 		--good 	--tune=psnr	\
-		--passes=1  --limit=10	\
+		--passes=1  --limit=200	\
 		--fps=${FPS}/1		\
 		--min-q=0 --max-q=63	\
 		--target-bitrate=${TargetBR} \
@@ -367,6 +426,66 @@ runTest_VBR_VP8()
 	./vpxenc ${EncoderCommand} 2>${LogFile}
 
 }
+
+
+#usage
+#runTest_VBR_VP8_Best  ${InputYUV}  ${OutputFile}   ${TargetBR} ${MaxKeyFrameD}   ${LogFile} 
+runTest_VBR_VP8_Best()
+{
+
+	if [ ! $# -eq 5 ]
+	then
+		echo "not enough parameters!"
+		echo "usage: runTest_VBR \${InputYUV} \${OutputFile}  \${TargetBR} \${MaxKeyFrameD} \${LogFile} "
+		return 1
+	fi
+	echo ""
+	echo "vp8 encoder VBR --good  mode......"
+	echo ""
+
+	local InputYUV=$1
+	local OutputFile=$2
+	local TargetBR=$3
+	local MaxKeyFrameD=$4
+	local LogFile=$5
+
+	local PerfINfo=""
+	echo "input yuv is ${InputYUV}"
+	echo ""
+
+	#get YUV detail info $picW $picH $FPS
+	local PicW=""
+	local PicH=""
+	local FPS=""
+
+	local YUVName=`runParseYUVName ${InputYUV}`
+	declare -a aYUVInfo
+	aYUVInfo=(`runGetYUVInfo ${InputYUV}`)
+	PicW=${aYUVInfo[0]}
+	PicH=${aYUVInfo[1]}
+	FPS=${aYUVInfo[2]}
+
+	local EncoderCommand=" \
+		 ${InputYUV}            \
+		-w ${PicW} -h ${PicH}   \
+		-o ${OutputFile}        \
+		--codec=vp8 		\
+		--end-usage=vbr		\
+		--cpu-used=0 	        \
+		--psnr	--verbose	\
+		--best 	--tune=psnr	\
+		--passes=1  --limit=200	\
+		--auto-alt-ref=1 	\
+		--fps=${FPS}/1		\
+		--min-q=0 --max-q=63	\
+		--target-bitrate=${TargetBR} \
+		--kf-max-dist=${MaxKeyFrameD}"
+
+	echo ${EncoderCommand}
+	./vpxenc ${EncoderCommand} 2>${LogFile}
+
+}
+
 
 
 
@@ -421,6 +540,63 @@ runTest_openh264()
 
 }
 
+
+#usage
+#runTest_x264  ${InputYUV} ${OutputFile}   ${QP}   ${LogFile}
+runTest_x264()
+{
+
+	if [ ! $# -eq 4 ]
+	then
+		echo "not enough parameters!"
+		echo "usage: runTest_x264 \${InputYUV} \${OutputFile}  \${QP}   \${LogFile}"
+		return 1
+	fi
+	echo ""
+	echo "X264_QP encoder....."
+	echo ""
+
+	local InputYUV=$1
+	local OutputFile=$2
+	local QP=$3
+	local LogFile=$4
+
+	local PerfINfo=""
+
+	#get YUV detail info $picW $picH $FPS
+	local PicW=""
+	local PicH=""
+	local FPS=""
+
+	local YUVName=`runParseYUVName ${InputYUV}`
+	declare -a aYUVInfo
+	aYUVInfo=(`runGetYUVInfo ${InputYUV}`)
+	PicW=${aYUVInfo[0]}
+	PicH=${aYUVInfo[1]}
+	FPS=${aYUVInfo[2]}
+	
+	local EncoderCommand="--preset veryslow   \
+				--tune psnr	  \
+				--keyint infinite \
+				--profile high	  \
+				--crf ${QP}	  \
+				--fps ${FPS}	  \
+				--frames 5	  \
+				-p 1		  "
+				
+
+	
+				
+	echo "input yuv is ${InputYUV}"
+	echo "QP is ${QP} "
+	echo ""
+	echo ${EncoderCommand}
+
+	./h264enc ${EncoderCommand} >${LogFile}
+
+}
+
+
 #usage
 #runTest_HEVC  ${InputYUV} ${OutputFile}   ${QP}   ${LogFile}
 runTest_HEVC()
@@ -462,7 +638,7 @@ runTest_HEVC()
 				-b ${OutputFile}  \
 				-o ${RecFile}	  \
 				-wdt ${PicW} -hgt ${PicH}  \
-				-fr ${FPS} -f 10 \
+				-fr ${FPS} -f 200 \
 				-q ${QP}"
 	
 				
@@ -473,7 +649,7 @@ runTest_HEVC()
 
 	
 
-	./TAppEncoderStatic ${EncoderCommand} >${LogFile}
+	./TAppEncoderStatic ${EncoderCommand}  >${LogFile}
 	rm  ${RecFile}
 }
 
@@ -498,7 +674,9 @@ runMain_JoinTest()
 	aQP=(17 22 27 32 37 42)
 
 	aTestYUVSet=(BQSquare_416x240_60.yuv   \
-			BasketballDrill_832x480_50.yuv    \
+			BlowingBubbles_416x240_50.yuv      \
+			BasketballDrill_832x480_50.yuv     \
+			BasketballDrillText_832x480_50.yuv \
 		  	foreman_352x288_30                \
 		  	src_pic_in_enc_1440x912_DOC.yuv   \
 			FourPeople_1280x720_60.yuv	  \
@@ -513,22 +691,31 @@ runMain_JoinTest()
 	local TargetBitRate=""
 
 	local HEVCPerforInfo=""
+
 	local VP9PerforInfo_VBR=""
+	local VP9PerforInfo_VBR_QP=""
+
 	local VP8PerforInfo_VBR=""
+	local VP8PerforInfo_VBR_Best=""
+
 	local Openh264PerforInfo=""
 	local LogFile=""
 
 	#inital perfermance file
 	echo "CommonInfo, ,  \
 		,HEVC, , , , ,\
-	        ,VP9-VBR, , , , , , ,\
-		,VP8-VBR, , , , , , ,\
+	        ,VP9-VBR_RC, , , , , , ,\
+	        ,VP9-VBR_QP, , , , , , ,\
+		,VP8-VBR_RC, , , , , , ,\
+		,VP8-VBR_Best, , , , , , ,\
 		,openh264">${AllPerformFile}
 
 	echo "YUV,QP, \
-		,BitRate(B), ET,  PSNR_Y,PSNR_U,PSNR_V,\
-		,BitRate(B), FPS, PSNR_OverAll, PSNR_Average, PSNR_Y,PSNR_U,PSNR_V,\
-		,BitRate(B), FPS, PSNR_OverAll, PSNR_Average, PSNR_Y,PSNR_U,PSNR_V,\
+		,BitRate(kbps), ET,  PSNR_Y,PSNR_U,PSNR_V,\
+		,BitRate(bps), FPS, PSNR_OverAll, PSNR_Average, PSNR_Y,PSNR_U,PSNR_V,\
+		,BitRate(bps), FPS, PSNR_OverAll, PSNR_Average, PSNR_Y,PSNR_U,PSNR_V,\
+		,BitRate(bps), FPS, PSNR_OverAll, PSNR_Average, PSNR_Y,PSNR_U,PSNR_V,\
+		,BitRate(bps), FPS, PSNR_OverAll, PSNR_Average, PSNR_Y,PSNR_U,PSNR_V,\
 		,BitRate(kb/s), FPS,PSNRY,PSNRU,PSNRV">>${AllPerformFile}
 
 
@@ -575,7 +762,25 @@ runMain_JoinTest()
 			echo ""
 			VP9PerforInfo_VBR=`runGetPerformanceInfo_VP9   ${LogFile}`
 			echo "VP9PerforInfo_VBR ${VP9PerforInfo_VBR}"
- 								
+
+
+			#for VP9 VBR QP Test
+			#############################################
+			echo ""
+			echo "VP9 QP is ${QP}"
+			echo "VP9 VBR QP Test..."
+			echo ""
+					
+			OutputFile="${YUV}_QP_${QP}_VBR_QP.vp9"
+			LogFile="${YUV}_QP_${QP}_VBR_QP_vp9.log"
+			runTest_VBR_VP9_QP "${TestSetPath}/${YUV}"  ${OutputFile}  ${QP} ${MaxKeyFrameD} ${LogFile}
+
+			echo ""
+			cat ${LogFile}
+			echo ""
+			VP9PerforInfo_VBR_QP=`runGetPerformanceInfo_VP9   ${LogFile}`
+			echo "VP9PerforInfo_VBR_QP ${VP9PerforInfo_VBR_QP}"
+ 	 								
 
 			#for VP8 VBR Test
 			#############################################
@@ -592,6 +797,23 @@ runMain_JoinTest()
 			echo ""
 			VP8PerforInfo_VBR=`runGetPerformanceInfo_VP9   ${LogFile}`
 			echo "VP8PerforInfo_VBR ${VP8PerforInfo_VBR}"
+
+			#for VP8 VBR Best Test
+			#############################################
+			echo ""
+			echo "VP8 VBR --best Test..."
+			echo ""
+					
+			OutputFile="${YUV}_Target_${TargetBitRate}_RT_Best.vp8"
+			LogFile="${YUV}_Target_${TargetBitRate}_RT_vp8_best.log"
+			runTest_VBR_VP8_Best  "${TestSetPath}/${YUV}"  ${OutputFile}  ${TargetBitRate} ${MaxKeyFrameD} ${LogFile}
+
+			echo ""
+			cat ${LogFile}
+			echo ""
+			VP8PerforInfo_VBR_Best=`runGetPerformanceInfo_VP9   ${LogFile}`
+			echo "VP8PerforInfo_VBR_Best ${VP8PerforInfo_VBR_Best}"
+
 		
 			#for open h264 test
 			############################################# 
@@ -605,7 +827,8 @@ runMain_JoinTest()
 			echo ""
 			Openh264PerforInfo=`runGetPerformanceInfo_openh264   ${LogFile}`
 
-			echo "${YUV}, ${QP}, ,${HEVCPerforInfo}, ,${VP9PerforInfo_VBR}, ,${VP8PerforInfo_VBR}, ,${Openh264PerforInfo}">>${AllPerformFile}
+			echo "${YUV}, ${QP}, ,${HEVCPerforInfo}, ,${VP9PerforInfo_VBR}, ,${VP9PerforInfo_VBR_QP}, \
+			      ,${VP8PerforInfo_VBR}, ,${VP8PerforInfo_VBR_Best}, ,${Openh264PerforInfo}">>${AllPerformFile}
 
 		done	
 		
@@ -615,7 +838,7 @@ runMain_JoinTest()
 }
 
 
-run_Debug_FUN()
+run_Debug_HEVC()
 {
 			YUV="BQSquare_416x240_60.yuv"
 			QP=27
@@ -641,9 +864,30 @@ run_Debug_FUN()
 
 }
 
+run_Debug_VP9()
+{
+			YUV="BQSquare_416x240_60.yuv"
+			QP=27
+			InputFile="/opt/VideoTest/YUV/BQSquare_416x240_60.yuv"
+			OutputFile="${YUV}_QP_${QP}.vp9"
+			LogFile="${YUV}_${QP}_VP9QP.log"
+			runTest_VBR_VP9_QP  "${InputFile}"  ${OutputFile}  ${QP}  1000  ${LogFile}
+
+			echo ""
+			echo "logfile is :"
+			cat ${LogFile}
+			echo "logfile end! :"
+			echo ""
+			echo ""
+			VP9PerforInfo_VBR_QP=`runGetPerformanceInfo_VP9   ${LogFile}`
+			echo "VP9PerforInfo_VBR_QP ${VP9PerforInfo_VBR_QP}"
+ 
+}
 
 
 #**************************************************
 #call main function
 
 runMain_JoinTest
+#run_Debug_FUN
+#run_Debug_VP9
