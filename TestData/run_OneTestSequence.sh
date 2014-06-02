@@ -22,7 +22,7 @@ runOneBitRate_openh264()
 	local OutputFile=""
 	local TempLog="Tem_openh264.log"
 	
-	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $FS}'`
+	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $NF}'`
 	LogFile="openh264_${YUVName}_BR_${TargetBitRate}.log"
 	OutputFile="openh264_${YUVName}_BR_${TargetBitRate}.264"
 	./run_TestOpenh264.sh   ${Option}  ${InputYUV} ${OutputFile}   ${TargetBitRate}   ${LogFile}>${TempLog}
@@ -51,7 +51,7 @@ runOneBitRate_VP8()
 	
 	local TempLog="Tem_vp8.log"
 	
-	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $FS}'`
+	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $NF}'`
 	LogFile="VP8_${YUVName}_BR_${TargetBitRate}.log"
 	OutputFile="VP8_${YUVName}_BR_${TargetBitRate}.vp8"
 	./run_TestVP8.sh   ${InputYUV}  ${OutputFile}   ${TargetBitRate}    ${LogFile}>${TempLog}
@@ -75,13 +75,14 @@ runOneBitRate_X264()
 	local InputYUV=$2
 	
 	local Profile=""
+	local Profile=""
 	local Speed=""
 	
 	local TempInfo=""
 	local PerfInfo=""
 	local LogFile=""
 	local OutputFile=""
-	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $FS}'`
+	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $NF}'`
 	
 	local TempLog="Tem_x264.log"
 	declare -a aX264Profile
@@ -130,7 +131,7 @@ runBitRateMode()
 	local TargetBitRate=""
 	
 	
-	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $FS}'`
+	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $NF}'`
 	declare -a aOpenh264BR
     aOpenh264BR=`./run_GetTargetBitRate.sh   ${YUVName}`
 	
