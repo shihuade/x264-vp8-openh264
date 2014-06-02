@@ -28,12 +28,13 @@ runGetTargetBitRate()
 	let "Flag_320=320*200"	
 	
 	#for testtarget bitrate initial
-	local BitRate_2K="2500  1500  1000 200"
-	local BitRate_1080p="2000 1500  800  120"
-	local BitRate_720p="1500  1000  500 100"
-	local BitRate_640="1200   800   200 80"
-	local BitRate_320="800  400  100 60"
-	local BitRate_160="700  200 80 50"
+	local BitRate_2K="2500  2000  1500  1000 500  200"
+	local BitRate_1080p="2000 1200   800  500  200   120"
+	local BitRate_720p="1500  1200   800  500  200   100"
+	local BitRate_640="1200   800    400  200  100   80"
+	local BitRate_320="1000   800    400  200  100   60"
+	local BitRate_160="800    400    200  100  80    40"
+	
 	if [  ${TotalPix} -ge ${Flag_2K} ]
 	then 
 		echo "${BitRate_2K}"
