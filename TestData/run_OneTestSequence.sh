@@ -1,8 +1,6 @@
 
+
 #!/bin/bash
-
-
-
 #uasage: runOneBitRate_openh264  ${TargetBitRate}  ${InputYUV}
 runOneBitRate_openh264()
 {
@@ -30,9 +28,7 @@ runOneBitRate_openh264()
 	#get performance info
 	PerfInfo=`./run_GetPerfInfo_openh264.sh   ${LogFile}`
 	echo ${PerfInfo}	
-
 }
-
 #uasage:runOneBitRate_VP8  ${TargetBitRate}  ${InputYUV}
 runOneBitRate_VP8()
 {
@@ -59,9 +55,7 @@ runOneBitRate_VP8()
 	#get performance info
 	PerfInfo=`./run_GetPerfInfo_VP8.sh   ${LogFile}`
 	echo ${PerfInfo}	
-
 }
-
 #usage: runOneBitRate_X264 ${TargetBitRate}  ${InputYUV}
 runOneBitRate_X264()
 {
@@ -70,7 +64,6 @@ runOneBitRate_X264()
 		echo  "usage: runOneBitRate_X264 \${TargetBitRate}  \${InputYUV}"
 		return 1
 	fi
-
 	local TargetBitRate=$1
 	local InputYUV=$2
 	
@@ -87,9 +80,8 @@ runOneBitRate_X264()
 	local TempLog="Tem_x264.log"
 	declare -a aX264Profile
 	declare -a aX264Speed
-	aX264Profile=(baseline )
-	aX264Speed=(veryfast   veryslow)
-	
+	aX264Profile=(baseline main  high)
+	aX264Speed=(veryfast fast   veryslow)
 	
 	for Profile  in ${aX264Profile[@]}
 	do
@@ -101,19 +93,16 @@ runOneBitRate_X264()
 			
 			#get performance info
 			TempInfo=`./run_GetPerfInfo_X264.sh   ${LogFile}`
-			PerfInfo="${PerfInfo},  , ${TempInfo}"			
+			PerfInfo="${PerfInfo},  ,  ,${TempInfo}"			
 		done
 	
 	done
 	
 	echo ${PerfInfo}
 }
-
 #usage: runBitRateMode  ${InputYUV}  ${StatisticFile}
 runBitRateMode()
 {
-
-
 	if [ ! $# -eq 2 ]
 	then
 		echo  "usage: runBitRateMode  \${InputYUV}  \${StatisticFile}"
@@ -127,7 +116,6 @@ runBitRateMode()
 	local Openh264PerfInfo=""
 	local VP8PerfInfo=""
 	local X264PerfInfo=""
-
 	local TargetBitRate=""
 	
 	
@@ -149,16 +137,12 @@ runBitRateMode()
 		echo "X264 ....."
 		X264PerfInfo=` runOneBitRate_X264 ${TargetBitRate}  ${InputYUV}`
 		echo ""
-
-		echo "${YUVName}_${TargetBitRate},${Openh264PerfInfo}, , ${VP8PerfInfo}, , ${X264PerfInfo}">>${StatisticFile}
+		echo "${YUVName}_${TargetBitRate},${Openh264PerfInfo}, , ${VP8PerfInfo}  ${X264PerfInfo}">>${StatisticFile}
 	done
 	
 	
-
 	
 }
-
-
 InputYUV=$1
 StatisticFile=$2
 runBitRateMode  ${InputYUV}  ${StatisticFile}
