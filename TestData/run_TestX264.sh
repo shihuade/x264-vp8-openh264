@@ -14,6 +14,7 @@ runCheckProfile()
 	
 	local ProfileName=$1
 	local Flag=""
+	local Profile=""
 	let "Flag=0"
 	declare -a aOptionList
 	aOptionList=(baseline main  high)
@@ -48,6 +49,7 @@ runCheckSpeed()
 	
 	local SpeedName=$1
 	local Flag=""
+	local Speed="" 
 	let "Flag=0"
 	declare -a aOptionList
 	aOptionList=(superfast veryfast fast medium veryslow)
@@ -122,7 +124,7 @@ runTest_x264_BR()
 	
 	local EncoderCommand="--profile ${Profile} \
 						--preset ${Speed}  	   \
-						--psnr                 \
+						--psnr  --tune psnr    \
 						--bitrate ${BitRate}   \
 						--fps  ${FPS}          \
 						-o ${OutputFile}       \
@@ -130,8 +132,12 @@ runTest_x264_BR()
 						
 	echo ""
 	echo ${EncoderCommand}
+	echo ""
+	echo "profile is ${Profile}  speed is ${Speed} "
+	echo ""
+	
 
-	./x264 ${EncoderCommand} >${LogFile}
+	./x264 ${EncoderCommand} 2>${LogFile}
 
 }
 
