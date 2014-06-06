@@ -1,11 +1,10 @@
 
-#!/bin/bash
 
+#!/bin/bash
 #usage
 #runTest_openh264  $Option  ${InputYUV} ${OutputFile}   ${TargetBR}/${QP}   ${LogFile}
 runTest_openh264()
 {
-
 	if [ ! $# -eq 5 ]
 	then
 		echo "not enough parameters!"
@@ -15,22 +14,18 @@ runTest_openh264()
 	echo ""
 	echo "openh264 encoder....."
 	echo ""
-
 	local Option=$1
 	local InputYUV=$2
 	local OutputFile=$3
 	local TargetBR=$4
 	local LayerQP=$4
 	local LogFile=$5
-
 	local PerfINfo=""
-
 	#get YUV detail info $picW $picH $FPS
 	local PicW=""
 	local PicH=""
 	local FPS=""
 	local EncoderCommand=""
-
 	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $FS}'`
 	declare -a aYUVInfo
 	aYUVInfo=(`./run_ParseYUVInfo.sh  ${InputYUV}`)
@@ -43,7 +38,6 @@ runTest_openh264()
 		echo "Picture info is not right "
 		exit 1
 	fi
-
 	if [ $FPS -eq 0 ]
 	then 		
 		let "FPS=30"
@@ -58,6 +52,7 @@ runTest_openh264()
 						-frout 0  ${FPS}               \
 						-bf   ${OutputFile}            \
 						-org  ${InputYUV}              \
+						-tarb  ${TargetBR}             \
 						-rc 1  -ltarb 0 ${TargetBR}  "
 	elif [[  "$Option" =  "QP"  ]]
 	then
@@ -79,20 +74,13 @@ runTest_openh264()
 	echo "Target BitRate is ${TargetBR} "
 	echo ""
 	echo ${EncoderCommand}
-
 	./h264enc ${EncoderCommand} >${LogFile}
-
 }
-
 Option=$1
 InputYUV=$2
 OutputFile=$3
 TargetBR=$4
 LogFile=$5
-
 runTest_openh264  ${Option}  ${InputYUV} ${OutputFile}   ${TargetBR}   ${LogFile}
-
-
-
 
 

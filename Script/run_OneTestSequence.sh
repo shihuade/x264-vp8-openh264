@@ -143,8 +143,86 @@ runBitRateMode()
 	
 	
 }
+#uasage: runOneQPOpenh264  ${TargetQP}  ${InputYUV}
+runOneQPOpenh264()
+{
+	if [ ! $# -eq 2 ]
+	then
+		echo "uasage: runOneQPOpenh264  \${TargetQP}  \${InputYUV}"
+		return 1
+	fi
+	
+	local TargetQP=$1
+	local InputYUV=$2
+	local Option="QP"
+	
+	local TempInfo=""
+	local PerfInfo=""
+	local LogFile=""
+	local OutputFile=""
+	local TempLog="Tem_openh264.log"
+	
+	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $NF}'`
+	LogFile="openh264_${YUVName}_BR_${TargetBitRate}.log"
+	OutputFile="openh264_${YUVName}_QP_${TargetQP}.264"
+	./run_TestOpenh264.sh   ${Option}  ${InputYUV} ${OutputFile}   ${TargetQP}   ${LogFile}>${TempLog}
+	
+	#get performance info
+	PerfInfo=`./run_GetPerfInfo_openh264.sh   ${LogFile}`
+	echo ${PerfInfo}   
+}
+runQPMode()
+{
+	if [ ! $# -eq 2 ]
+	then
+		echo  "usage: runBitRateMode  \${InputYUV}  \${StatisticFile}"
+		return 1
+	fi
+	
+	local InputYUV=$1
+	local StatisticFile=$2
+	
+	
+	local Openh264PerfInfo=""
+	local VP8PerfInfo=""
+	local X264PerfInfo=""
+	local TargetBitRate=""
+	local QP=""
+	
+	declare -a aOpenh264PerfInfo
+	
+	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $NF}'`
+	
+	declare -a aOpenh264QP
+    aOpenh264QP=(12  18  24  30  36 42)
+	
+	for   QP  in ${aOpenh264QP}
+	do
+		echo ""
+		echo "openh264 ..."
+		Openh264PerfInfo=`runOneQPOpenh264  ${QP}  ${InputYUV}`
+		
+		aOpenh264PerfInfo=( ${Openh264PerfInfo} )
+		let  "TargetBitRate=${aOpenh264PerfInfo[0]}"
+		
+		echo "QP mode, openh264 bitrate is ${TargetBitRate}"
+		
+		echo ""
+		echo "VP8 ..."		
+		VP8PerfInfo=`runOneBitRate_VP8  ${TargetBitRate}  ${InputYUV}`	
+		
+		echo ""
+		echo "X264 ....."
+		X264PerfInfo=` runOneBitRate_X264 ${TargetBitRate}  ${InputYUV}`
+		echo ""
+		echo "${YUVName}_${TargetBitRate},${Openh264PerfInfo}, , ${VP8PerfInfo}  ${X264PerfInfo}">>${StatisticFile}
+	done
+	
+	
+	
+}
 InputYUV=$1
 StatisticFile=$2
-runBitRateMode  ${InputYUV}  ${StatisticFile}
+runQPMode  ${InputYUV}  ${StatisticFile}
 
 
