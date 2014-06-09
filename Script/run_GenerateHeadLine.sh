@@ -1,7 +1,6 @@
 
+
 #!/bin/bash
-
-
 #usage: runGenerateHeadLine ${FinalResultFile} 
 runGenerateHeadLine()
 {
@@ -13,8 +12,8 @@ runGenerateHeadLine()
 	
 	
 	local FinalResultFile=$1
-	local HeadLine_1="TestSequence, openh264 ,  ,      ,      ,   ,   , , VP8 ,      ,       ,      ,   ,   , , "
-	local HeadLine_2="            , BR,  PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , BR,  PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , "
+	local HeadLine_1="TestSequence, openh264QP ,  ,      ,       ,   ,   , , openh264BR,  ,       ,      ,   ,   , , VP8 ,      ,       ,      ,   ,   , , "
+	local HeadLine_2="            , BR,     PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , BR,    PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , BR,  PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , "
 	
 	local Profile=""
 	local Speed=""
@@ -23,7 +22,7 @@ runGenerateHeadLine()
    	declare -a aX264Profile
 	declare -a aX264Speed
 	aX264Profile=(baseline main  high)
-	aX264Speed=(veryfast fast   veryslow)
+	aX264Speed=(veryfast fast    slow)
 	local Index=""
 	let "Index=0"
 	for Profile in ${aX264Profile[@]}
@@ -43,7 +42,6 @@ runGenerateHeadLine()
 	echo "${HeadLine_2}">>${FinalResultFile}
 	
 }
-
 FinalResultFile=$1
 runGenerateHeadLine ${FinalResultFile} 
 

@@ -43,8 +43,8 @@ runTest_VBR_Fast()
 	fi	
 	
 	local EncoderCommand="   \
-		 ${InputYUV} -o ${OutputFile}         \ 
-		 --codec=vp8 -w ${PicW} -h ${PicH}    \		     
+		 ${InputYUV} -o ${OutputFile}         \
+		 --codec=vp8 -w ${PicW} -h ${PicH}    \
 		 -p 1 -t 4   --good --cpu-used=3      \
 		 --target-bitrate=${TargetBR}         \
 		 --end-usage=vbr  --fps=${FPS}/1      \
@@ -62,5 +62,6 @@ OutputFile=$2
 TargetBR=$3
 LogFile=$4
 runTest_VBR_Fast  ${InputYUV}  ${OutputFile}   ${TargetBR}    ${LogFile} 
+
 
 
