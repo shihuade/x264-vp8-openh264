@@ -45,7 +45,7 @@ runTest_openh264()
 		
 	if [[  "$Option" = "BR"  ]]
 	then 
-		EncoderCommand="welsenc.cfg  -numl 1	       \
+		EncoderCommand="welsenc.cfg  -numl 1	 -frms -1      \
 						-lconfig 0 layer2.cfg   	   \
 						-sw   ${PicW} -sh   ${PicH}    \
 						-dw 0 ${PicW} -dh 0 ${PicH}    \
@@ -56,7 +56,7 @@ runTest_openh264()
 						-rc 1  -ltarb 0 ${TargetBR}  "
 	elif [[  "$Option" =  "QP"  ]]
 	then
-		EncoderCommand="welsenc.cfg  -numl 1	       \
+		EncoderCommand="welsenc.cfg  -numl 1	  -frms -1     \
 						-lconfig 0 layer2.cfg   	   \
 						-sw   ${PicW} -sh   ${PicH}    \
 						-dw 0 ${PicW} -dh 0 ${PicH}    \

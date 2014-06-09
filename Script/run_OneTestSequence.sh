@@ -193,7 +193,7 @@ runQPMode()
 	TempLog="${YUVName}_Console.log"
 	
 	declare -a aOpenh264QP
-    aOpenh264QP=(12   18  24  36  48   60 )
+    aOpenh264QP=(12   18  24  36 )
 	
 	for   QP  in ${aOpenh264QP[@]}
 	do
