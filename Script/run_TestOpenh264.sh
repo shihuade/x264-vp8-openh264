@@ -54,7 +54,7 @@ runTest_openh264()
 						-org  ${InputYUV}              \
 						-tarb  ${TargetBR}             \
 						-rc 1 -tarb  ${TargetBR}      \
-						-ltarb 0 ${TargetBR}“
+						-ltarb 0 ${TargetBR}"
 				
 	elif [[  "$Option" =  "QP"  ]]
 	then
