@@ -53,7 +53,9 @@ runTest_openh264()
 						-bf   ${OutputFile}            \
 						-org  ${InputYUV}              \
 						-tarb  ${TargetBR}             \
-						-rc 1  -ltarb 0 ${TargetBR}  "
+						-rc 1 -tarb  ${TargetBR}      \
+						-ltarb 0 ${TargetBR}“
+				
 	elif [[  "$Option" =  "QP"  ]]
 	then
 		EncoderCommand="welsenc.cfg  -numl 1	  -frms -1     \
