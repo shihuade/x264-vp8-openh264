@@ -1,1 +1,0 @@
-/h264enc welsenc.cfg -numl 1 layer2.cfg -bf BQTerrace_1920x1080_60.yuv_Target_176421_openh264.264 -org 0 /opt/VideoTest/YUV/BQTerrace_1920x1080_60.yuv -sw 0 1920 -sh 0 1080 -rc 1 -frout 0 60 -frin 0 60   -ltarb 0 176421

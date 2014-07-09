@@ -78,7 +78,7 @@ runOneBitRate_X264()
 	declare -a aX264Profile
 	declare -a aX264Speed
 	aX264Profile=(baseline main  high)
-	aX264Speed=(veryfast fast   slow)
+	aX264Speed=(veryfast fast)
 	
 	for Profile  in ${aX264Profile[@]}
 	do
