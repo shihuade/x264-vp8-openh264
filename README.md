@@ -5,7 +5,6 @@ x264-vp8-openh264
 
 - for psnr info output;
   need to enable below macro in file as264_common.h ( Ciscoopenh264 project ）
- 
--     #define FRAME_INFO_OUTPUT
--     #define STAT_OUTPUT
--     #define ENABLE_PSNR_CALC
+      #define FRAME_INFO_OUTPUT
+      #define STAT_OUTPUT
+      #define ENABLE_PSNR_CALC
