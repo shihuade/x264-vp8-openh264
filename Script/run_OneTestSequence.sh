@@ -1,26 +1,25 @@
-
-
 #!/bin/bash
-#uasage: runOneBitRate_openh264  ${TargetBitRate}  ${InputYUV}
+
+
+#uasage: runOneBitRate_openh264  ${Option}  ${TargetBitRate}  ${InputYUV}
 runOneBitRate_openh264()
 {
-	if [ ! $# -eq 2 ]
+	if [ ! $# -eq 3  ]
 	then
-		echo "uasage: runOneBitRate_openh264  \${TargetBitRate}  \${InputYUV}"
+		echo "uasage: runOneBitRate_openh264  \${Option} \${TargetBitRate}  \${InputYUV}"
 		return 1
 	fi
 	
-	local TargetBitRate=$1
-	local InputYUV=$2
-	local Option="BR"
+	local Option=$1
+	local TargetBitRate=$2
+	local InputYUV=$3
+	
 	
 	local TempInfo=""
 	local PerfInfo=""
 	local LogFile=""
 	local OutputFile=""
 	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $NF}'`
-	
-	
 	
 	LogFile="openh264_${YUVName}_BR_${TargetBitRate}.log"
 	OutputFile="openh264_${YUVName}_BR_${TargetBitRate}.264"
@@ -30,6 +29,7 @@ runOneBitRate_openh264()
 	PerfInfo=`./run_GetPerfInfo_openh264.sh   ${LogFile}`
 	echo ${PerfInfo}	
 }
+
 #uasage:runOneBitRate_VP8  ${TargetBitRate}  ${InputYUV}
 runOneBitRate_VP8()
 {
@@ -77,24 +77,39 @@ runOneBitRate_X264()
 	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $NF}'`
 	declare -a aX264Profile
 	declare -a aX264Speed
-	aX264Profile=(baseline main  high)
-	aX264Speed=(veryfast fast)
+	declare -a aTestIndex
+	aX264Profile=(baseline)
+	aX264Speed=(faster fast)
+	aTestIndex=(0 1 2)
 	
 	for Profile  in ${aX264Profile[@]}
 	do
-		for Speed in ${aX264Speed[@]}
+		for TestIndex in ${aTestIndex[@]}
 		do
-			LogFile="X264_${YUVName}_Profile_${Profile}_Speed_${Speed}_BR_${TargetBitRate}.log"
-			OutputFile="X264_${YUVName}_Profile_${Profile}_Speed_${Speed}_BR_${TargetBitRate}.264"
-			./run_TestX264.sh  ${Profile}  ${Speed} ${InputYUV} ${OutputFile}  ${TargetBitRate}   ${LogFile}>>${TempLog}
+		    if [ ${TestIndex} -eq 0  ]
+			then
+				for Speed in ${aX264Speed[@]}
+				do
+					LogFile="X264_${YUVName}_Profile_${Profile}_Speed_${Speed}_BR_${TargetBitRate}_TestIndex_${TestIndex}.log"
+					OutputFile="X264_${YUVName}_Profile_${Profile}_Speed_${Speed}_BR_${TargetBitRate}_TestIndex_${TestIndex}.264"
+					./run_TestX264.sh  ${TestIndex} ${Profile}  ${Speed} ${InputYUV} ${OutputFile}  ${TargetBitRate}   ${LogFile}>>${TempLog}
+					
+					#get performance info
+					TempInfo=`./run_GetPerfInfo_X264.sh   ${LogFile}`
+					PerfInfo="${PerfInfo},  ,  ,${TempInfo}"
+				done					
+			else
+					LogFile="X264_${YUVName}_Profile_${Profile}_Speed_${Speed}_BR_${TargetBitRate}_TestIndex_${TestIndex}.log"
+					OutputFile="X264_${YUVName}_Profile_${Profile}_Speed_${Speed}_BR_${TargetBitRate}_TestIndex_${TestIndex}.264"
+					./run_TestX264.sh  ${TestIndex} ${Profile}  ${Speed} ${InputYUV} ${OutputFile}  ${TargetBitRate}   ${LogFile}>>${TempLog}					
+					#get performance info
+					TempInfo=`./run_GetPerfInfo_X264.sh   ${LogFile}`
+					PerfInfo="${PerfInfo},  ,  ,${TempInfo}"						
+			fi
 			
-			#get performance info
-			TempInfo=`./run_GetPerfInfo_X264.sh   ${LogFile}`
-			PerfInfo="${PerfInfo},  ,  ,${TempInfo}"			
-		done
-	
+		done	
 	done
-	
+
 	echo ${PerfInfo}
 }
 #usage: runBitRateMode  ${InputYUV}  ${StatisticFile}
@@ -181,6 +196,7 @@ runQPMode()
 	
 	local Openh264PerfInfoQP=""
 	local Openh264PerfInfoBR=""
+	local Openh264PerfInfoMulti=""
 	local VP8PerfInfo=""
 	local X264PerfInfo=""
 	local TargetBitRate=""
@@ -209,18 +225,22 @@ runQPMode()
 		echo "QP mode, openh264 bitrate is ${TargetBitRate}"
 		
 		echo "opeh264 BR mode"
-		Openh264PerfInfoBR=`runOneBitRate_openh264 ${TargetBitRate}  ${InputYUV}`
+		Openh264PerfInfoBR=`runOneBitRate_openh264  BR ${TargetBitRate}  ${InputYUV}`
 		echo "Openh264PerfInfoBR is ${Openh264PerfInfoBR}"
 		
-		echo ""
-		echo "VP8 ..."		
-		VP8PerfInfo=`runOneBitRate_VP8  ${TargetBitRate}  ${InputYUV}`	
+		echo "opeh264 BR mode"
+		Openh264PerfInfoMulti=`runOneBitRate_openh264 MultiSlice ${TargetBitRate}  ${InputYUV}`
+		echo "Openh264PerfInfoMulti is ${Openh264PerfInfoMulti}"
+		
+		#echo ""
+		#echo "VP8 ..."		
+		#VP8PerfInfo=`runOneBitRate_VP8  ${TargetBitRate}  ${InputYUV}`	
 		
 		echo ""
 		echo "X264 ....."
 		X264PerfInfo=` runOneBitRate_X264 ${TargetBitRate}  ${InputYUV}`
 		echo ""
-		echo "${YUVName}_QP_${QP}_TarBit_${TargetBitRate},${Openh264PerfInfoQP},  ,${Openh264PerfInfoBR}, , ${VP8PerfInfo}  ${X264PerfInfo}">>${StatisticFile}
+		echo "${YUVName}_QP_${QP}_TarBit_${TargetBitRate},${Openh264PerfInfoQP},  ,${Openh264PerfInfoBR}, ,${Openh264PerfInfoMulti}, , ${X264PerfInfo}">>${StatisticFile}
 	done
 	
 	
@@ -229,6 +249,5 @@ runQPMode()
 InputYUV=$1
 StatisticFile=$2
 runQPMode  ${InputYUV}  ${StatisticFile}
-
 
 
