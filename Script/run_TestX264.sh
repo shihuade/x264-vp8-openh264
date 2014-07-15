@@ -106,13 +106,14 @@ runTest_x264_BR()
 		let "FPS=30"
 	fi
 	
-	local EncoderCommand="--profile ${Profile} \
-						--preset ${Speed}  	   \
-						--psnr  --tune psnr    \
-						--bitrate ${BitRate}   \
-						--fps  ${FPS}          \
-						-o ${OutputFile}       \
-						${InputYUV}"
+	local EncoderCommand="--profile ${Profile}     \
+				--preset ${Speed}      \
+				--psnr  --aq-mode 2    \
+				--bitrate ${BitRate}   \
+				--deblock 0:0          \
+				--fps  ${FPS}          \
+				-o ${OutputFile}       \
+				${InputYUV}"
 						
 	echo ""
 	echo ${EncoderCommand}
