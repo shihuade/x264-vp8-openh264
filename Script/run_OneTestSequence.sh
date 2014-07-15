@@ -240,7 +240,7 @@ runQPMode()
 		echo "X264 ....."
 		X264PerfInfo=` runOneBitRate_X264 ${TargetBitRate}  ${InputYUV}`
 		echo ""
-		echo "${YUVName}_QP_${QP}_TarBit_${TargetBitRate},${Openh264PerfInfoQP},  ,${Openh264PerfInfoBR}, ,${Openh264PerfInfoMulti}, , ${X264PerfInfo}">>${StatisticFile}
+		echo "${YUVName}_QP_${QP}_TarBit_${TargetBitRate},${Openh264PerfInfoQP},  ,${Openh264PerfInfoBR}, ,${Openh264PerfInfoMulti}  ${X264PerfInfo}">>${StatisticFile}
 	done
 	
 	
@@ -249,5 +249,4 @@ runQPMode()
 InputYUV=$1
 StatisticFile=$2
 runQPMode  ${InputYUV}  ${StatisticFile}
-
 

@@ -25,28 +25,27 @@ runGenerateHeadLine()
 	aX264Profile=(baseline)
 	aX264Speed=(fast  faster  )
 	aX264TestIndex=(0 1 2)
-	local Index=""
-	let "Index=0"
+
 	for Profile in ${aX264Profile[@]}
 	do
-	    for Index in ${aX264TestIndex}
+	    for TestIndex in ${aX264TestIndex[@]}
 		do
-		    if [  ${Index} -eq 0   ]
+		    if [  ${TestIndex} -eq 0   ]
 			then
 				for Speed in ${aX264Speed[@]}
 				do
-					TempData_1="x264_${Index}, Profile_${Profile},Speed_${Speed},       ,   ,"
+					TempData_1="x264_${TestIndex}, Profile_${Profile},Speed_${Speed},       ,   ,"
 					TempData_2="BR                      , PSNR_Y,PSNR_U,PSNR_V, FPS,"
 					HeadLine_1="${HeadLine_1},${TempData_1},"
 					HeadLine_2="${HeadLine_2},${TempData_2},"	
-					let "Index++"				   				 
+							   				 
 				done						
 			else
-				TempData_1="x264_${Index}, Profile_${Profile},Speed_${Speed},       ,   ,"
+				TempData_1="x264_${TestIndex}, Profile_${Profile},,       ,   ,"
 				TempData_2="BR                      , PSNR_Y,PSNR_U,PSNR_V, FPS,"
 				HeadLine_1="${HeadLine_1},${TempData_1},"
 				HeadLine_2="${HeadLine_2},${TempData_2},"	
-				let "Index++"					
+					
 			fi		
 		done
 	

@@ -107,7 +107,7 @@ runTest_x264_BR()
 	local EncoderCommand="--profile ${Profile}     \
 				--preset ${Speed}      \
 				--psnr  --aq-mode 2    \
-				--me dia               \
+				--me dia   --slices 1  \
 				--bitrate ${BitRate}   \
 				--deblock 0:0          \
 				--fps  ${FPS}          \
@@ -164,8 +164,8 @@ runTest_x264_Index1()
 	fi
     # --rc-lookahead 25  veryfast<speed<faster
 	local EncoderCommand="--profile ${Profile}  \
-				--rc-lookahead 25      \
-                --me dia --subme 7	   \
+				--rc-lookahead 20      \
+                --me hex --subme 7	   \
 				--psnr  --aq-mode 2    \
 				--bitrate ${BitRate}   \
 				--deblock 0:0          \
@@ -222,16 +222,18 @@ runTest_x264_Index2()
 	fi
     # --rc-lookahead 25  veryfast<speed<faster
 	local EncoderCommand="--profile ${Profile}  \
-				--rc-lookahead 25      \
-                --me dia --subme 7	   \
+				--rc-lookahead 20      \
+                --me umh --subme 7	   \
 				--psnr  --aq-mode 2    \
-				--slice 4  --thread 4  \
+				--slices 4 --threads 4 \
 				--bitrate ${BitRate}   \
 				--deblock 0:0          \
 				--fps  ${FPS}          \
 				-o ${OutputFile}       \
 				${InputYUV}"
 
+				
+				
 	echo ""
 	echo ${EncoderCommand}
 	echo ""
@@ -284,6 +286,4 @@ OutputFile=$5
 BitRate=$6
 LogFile=$7
 runMain  ${TestIndex}  ${Profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
-
-
 
