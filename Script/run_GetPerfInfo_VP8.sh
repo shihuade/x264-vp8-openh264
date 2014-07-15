@@ -53,7 +53,8 @@ runGetPerformanceInfo_VP8()
 		fi
 
 	done <${PerformanceLogFile}
-
+        #use bc tool to transform to kbps
+        BitRate=`echo "scale=2; ${BitRate}/1024"|bc`
 	echo "${BitRate},${PSNRY},${PSNRU},${PSNRV},${FPS}, ${EncodeTime}" 
 	      
 }
