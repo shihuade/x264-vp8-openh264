@@ -50,7 +50,11 @@ runTest_openh264()
 						-frout 0  ${FPS}               \
 						-bf   ${OutputFile}            \
 						-org  ${InputYUV}              \
-						-rc 1 -tarb  ${TargetBR}      \
+						-iper -1 \
+						-deblockIdc 0  -alphaOffset 0  \
+                        -betaOffset 0  -aq 1 -thread 1 \
+					    -slcmd 0 0 -slcnum 0 0         \
+						-rc 1 -tarb  ${TargetBR}       \
 						-ltarb 0 ${TargetBR}"
 
 	elif [[  "$Option" =  "QP"  ]]
@@ -62,6 +66,10 @@ runTest_openh264()
 						-frout 0  ${FPS}               \
 						-bf   ${OutputFile}            \
 						-org  ${InputYUV}              \
+						-iper -1 \
+						-deblockIdc 0  -alphaOffset 0  \
+                        -betaOffset 0  -aq 1 -thread 1 \
+					    -slcmd 0 0 -slcnum 0 0         \
 						-rc -1  -lqp  0 ${LayerQP}  "							
 	elif [[  "$Option" =  "MultiSlice"  ]]
 	then
@@ -72,6 +80,9 @@ runTest_openh264()
 						-frout 0  ${FPS}               \
 						-bf   ${OutputFile}            \
 						-org  ${InputYUV}              \
+						-iper -1 \
+						-deblockIdc 0  -alphaOffset 0  \
+                        -betaOffset 0  -aq 1  \
                         -slcmd 0 1 -slcnum 0 4         \
 						-threadIdc 4                   \
 						-rc 1 -tarb  ${TargetBR}       \
@@ -95,4 +106,5 @@ OutputFile=$3
 TargetBR=$4
 LogFile=$5
 runTest_openh264  ${Option}  ${InputYUV} ${OutputFile}   ${TargetBR}   ${LogFile}
+
 

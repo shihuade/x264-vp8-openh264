@@ -104,10 +104,13 @@ runTest_x264_BR()
 		let "FPS=30"
 	fi
 
-	local EncoderCommand="--profile ${Profile}     \
+	local EncoderCommand="--profile ${Profile} \
+				--keyint infinite      \
 				--preset ${Speed}      \
-				--psnr  --aq-mode 2    \
+				--psnr  --no-psy \
+				--aq-mode 0    \
 				--me dia   --slices 1  \
+				--slices 1 --threads 1 \
 				--bitrate ${BitRate}   \
 				--deblock 0:0          \
 				--fps  ${FPS}          \
@@ -117,11 +120,71 @@ runTest_x264_BR()
 	echo ""
 	echo ${EncoderCommand}
 	echo ""
-	echo "profile is ${Profile}  speed is ${Speed} "
+
+	./x264 ${EncoderCommand} 2>${LogFile}
+}
+
+#usage
+#runTest_x264_QP ${profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
+runTest_x264_QP()
+{
+	if [ ! $# -eq 6 ]
+	then
+		echo  "runTest_x264_QP \${profile}  \${Speed} \${InputYUV} \${OutputFile}  \${BitRate}   \${LogFile}"
+		return 1
+	fi
+	echo ""
+	echo "X264_BR encoder....."
+	echo ""
+	local Profile=$1
+	local Speed=$2
+	local InputYUV=$3
+	local OutputFile=$4
+	local QP=$5
+	local LogFile=$6
+	runCheckProfile  ${Profile}
+	runCheckSpeed    ${Speed}
+
+	#get YUV detail info $picW $picH $FPS
+	local PicW=""
+	local PicH=""
+	local FPS=""
+	local YUVName=`echo  ${InputYUV} | awk 'BEGIN {FS="/"}  {print $FS}'`
+	declare -a aYUVInfo
+	aYUVInfo=(`./run_ParseYUVInfo.sh  ${InputYUV}`)
+	PicW=${aYUVInfo[0]}
+	PicH=${aYUVInfo[1]}
+	FPS=${aYUVInfo[2]}
+
+	if [ $PicW -eq 0  ]
+	then 
+		echo "Picture info is not right "
+		exit 1
+	fi
+	if [ $FPS -eq 0 ]
+	then 		
+		let "FPS=30"
+	fi
+
+	local EncoderCommand="--profile ${Profile}     \
+				--preset ${Speed}      \
+				--keyint infinite      \
+				--psnr  --no-psy \
+				--aq-mode 0    \
+				--me dia  	--qp ${QP} \
+				--slices 1 --threads 1 \
+				--deblock 0:0          \
+				--fps  ${FPS}          \
+				-o ${OutputFile}       \
+				${InputYUV}"
+
+	echo ""
+	echo ${EncoderCommand}
 	echo ""
 
 	./x264 ${EncoderCommand} 2>${LogFile}
 }
+
 
 
 #usage: runTest_x264_Index1 ${profile} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
@@ -163,10 +226,13 @@ runTest_x264_Index1()
 		let "FPS=30"
 	fi
     # --rc-lookahead 25  veryfast<speed<faster
-	local EncoderCommand="--profile ${Profile}  \
-				--rc-lookahead 20      \
+	local EncoderCommand="--profile ${Profile}    \
+				--no-mixed-refs  --ref 4 \
+				--psnr  --no-psy \
+				--rc-lookahead 15 \
                 --me hex --subme 7	   \
-				--psnr  --aq-mode 2    \
+				--aq-mode 0    \
+				--slices 1 --threads 1 \
 				--bitrate ${BitRate}   \
 				--deblock 0:0          \
 				--fps  ${FPS}          \
@@ -176,9 +242,7 @@ runTest_x264_Index1()
 	echo ""
 	echo ${EncoderCommand}
 	echo ""
-	echo "profile is ${Profile}  speed is ${Speed} "
-	echo ""
-	
+
 	./x264 ${EncoderCommand} 2>${LogFile}
 }
 
@@ -196,7 +260,7 @@ runTest_x264_Index2()
 	local Profile=$1
 	local InputYUV=$2
 	local OutputFile=$3
-	local BitRate=$4
+	local QP=$4
 	local LogFile=$5
 	runCheckProfile  ${Profile}
 
@@ -222,60 +286,64 @@ runTest_x264_Index2()
 	fi
     # --rc-lookahead 25  veryfast<speed<faster
 	local EncoderCommand="--profile ${Profile}  \
-				--rc-lookahead 20      \
-                --me umh --subme 7	   \
-				--psnr  --aq-mode 2    \
-				--slices 4 --threads 4 \
-				--bitrate ${BitRate}   \
+				--no-mixed-refs  --ref 4 \
+				--psnr  --no-psy \
+				--rc-lookahead 15 \
+                --me hex --subme 7	   \
+				--aq-mode 0   \
+				--slices 1 --threads 1 \
+				--qp ${QP}             \
 				--deblock 0:0          \
 				--fps  ${FPS}          \
 				-o ${OutputFile}       \
 				${InputYUV}"
-
-				
-				
 	echo ""
 	echo ${EncoderCommand}
 	echo ""
-	echo "profile is ${Profile}  speed is ${Speed} "
-	echo ""
-	
+
 	./x264 ${EncoderCommand} 2>${LogFile}
 }
 
 
-#usage: runMain  ${TestIndex}  ${profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
+#usage: runMain  ${TestIndex}  ${profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate} ${QP}  ${LogFile}
 runMain()
 {
-	if [ ! $# -eq 7 ]
+	if [ ! $# -eq 8 ]
 	then
-		echo  "runMain  \${TestIndex} \${profile}  \${Speed} \${InputYUV} \${OutputFile}  \${BitRate}   \${LogFile}"
+		echo  "runMain  \${TestIndex} \${profile}  \${Speed} \${InputYUV} \${OutputFile}  \${BitRate}  \${QP} \${LogFile}"
 		return 1
 	fi
 
-	TestIndex=$1
-	Profile=$2
-	Speed=$3
-	InputYUV=$4
-	OutputFile=$5
-	BitRate=$6
-	LogFile=$7
-	
+	local TestIndex=$1
+	local Profile=$2
+	local Speed=$3
+	local InputYUV=$4
+	local OutputFile=$5
+	local BitRate=$6
+	local QP=$7
+	local LogFile=$8
+
 	if [ ${TestIndex} -eq 0  ]
 	then
 		runTest_x264_BR  ${Profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
 	fi
-	
+
 	if [ ${TestIndex} -eq 1  ]
 	then
-		runTest_x264_Index1  ${Profile}  ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
+		runTest_x264_QP  ${Profile}  ${Speed}   ${InputYUV} ${OutputFile}  ${QP}    ${LogFile}
 	fi
+	
 	
 	if [ ${TestIndex} -eq 2  ]
 	then
-		runTest_x264_Index2  ${Profile}  ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
+		runTest_x264_Index1  ${Profile}  ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
+	fi
+
+	if [ ${TestIndex} -eq 3  ]
+	then
+		runTest_x264_Index2  ${Profile}  ${InputYUV} ${OutputFile}  ${QP}   ${LogFile}
 	fi	
-	
+
 }
 
 TestIndex=$1
@@ -284,6 +352,7 @@ Speed=$3
 InputYUV=$4
 OutputFile=$5
 BitRate=$6
-LogFile=$7
-runMain  ${TestIndex}  ${Profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
+QP=$7
+LogFile=$8
+runMain   ${TestIndex}  ${Profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate}  ${QP} ${LogFile}
 

@@ -12,52 +12,18 @@ runGenerateHeadLine()
 	
 	
 	local FinalResultFile=$1
-	local HeadLine_1="TestSequence, openh264QP ,  ,      ,       ,   ,   , , openh264BR,  ,       ,      ,   ,   , , Openh264Multi ,      ,       ,      ,   ,   , , "
-	local HeadLine_2="            , BR,     PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , BR,    PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , BR,  PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , "
+	local HeadLineOpenh264_1="TestSequence, openh264QP ,  ,      ,       ,   ,   , , openh264BR,  ,       ,      ,   ,   ,"
+	local HeadLineOpenh264_2="            , BR,     PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , BR,    PSNR_Y, PSNR_U,PSNR_V,FPS, ET,"
 	
-	local Profile=""
-	local Speed=""
-	local TempData_1=""
-	local TempData_2=""
-   	declare -a aX264Profile
-	declare -a aX264Speed
-	declare -a aX264TestIndex
-	aX264Profile=(baseline)
-	aX264Speed=(fast  faster  )
-	aX264TestIndex=(0 1 2)
-
-	for Profile in ${aX264Profile[@]}
-	do
-	    for TestIndex in ${aX264TestIndex[@]}
-		do
-		    if [  ${TestIndex} -eq 0   ]
-			then
-				for Speed in ${aX264Speed[@]}
-				do
-					TempData_1="x264_${TestIndex}, Profile_${Profile},Speed_${Speed},       ,   ,"
-					TempData_2="BR                      , PSNR_Y,PSNR_U,PSNR_V, FPS,"
-					HeadLine_1="${HeadLine_1},${TempData_1},"
-					HeadLine_2="${HeadLine_2},${TempData_2},"	
-							   				 
-				done						
-			else
-				TempData_1="x264_${TestIndex}, Profile_${Profile},,       ,   ,"
-				TempData_2="BR                      , PSNR_Y,PSNR_U,PSNR_V, FPS,"
-				HeadLine_1="${HeadLine_1},${TempData_1},"
-				HeadLine_2="${HeadLine_2},${TempData_2},"	
-					
-			fi		
-		done
+	local HeadLineX264_1="X264_Baseline_BR,  ,  ,  ,   ,   ,  X264_Baseline_QP,  ,  ,  ,    ,  ,  X264_Baseline_BR,  ,  ,  ,    ,   ,  X264_Baseline_QP,  ,  ,  ,    ,  "
+	local HeadLineX264_2="BR, PSNR_Y,PSNR_U,PSNR_V,	FPS,   ,  BR, PSNR_Y,PSNR_U,PSNR_V,  FPS,  ,  BR, PSNR_Y,PSNR_U,PSNR_V,  FPS,   ,  BR, PSNR_Y,PSNR_U,PSNR_V,   FPS,"
 	
-	done
 	
-	echo "${HeadLine_1}">${FinalResultFile}
-	echo "${HeadLine_2}">>${FinalResultFile}
+	echo "${HeadLineOpenh264_1}  ,  ${HeadLineX264_1}">${FinalResultFile}
+	echo "${HeadLineOpenh264_2}  ,  ${HeadLineX264_2}">>${FinalResultFile}
 	
 }
 FinalResultFile=$1
 runGenerateHeadLine ${FinalResultFile} 
-
-
 
 
