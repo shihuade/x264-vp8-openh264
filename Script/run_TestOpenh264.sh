@@ -30,7 +30,6 @@ runTest_openh264()
 	PicW=${aYUVInfo[0]}
 	PicH=${aYUVInfo[1]}
 	FPS=${aYUVInfo[2]}
-
 	if [ $PicW -eq 0  ]
 	then 
 		echo "Picture info is not right "
@@ -40,7 +39,6 @@ runTest_openh264()
 	then 		
 		let "FPS=30"
 	fi
-
 	if [[  "$Option" = "BR"  ]]
 	then 
 		EncoderCommand="welsenc.cfg  -numl 1	 -frms -1      \
@@ -55,8 +53,9 @@ runTest_openh264()
                         -betaOffset 0  -aq 1 -thread 1 \
 					    -slcmd 0 0 -slcnum 0 0         \
 						-rc 1 -tarb  ${TargetBR}       \
-						-ltarb 0 ${TargetBR}"
-
+						-ltarb 0 ${TargetBR}\
+						-denois  0  -scene 0\
+						-bgd 0  -aq 0 "
 	elif [[  "$Option" =  "QP"  ]]
 	then
 		EncoderCommand="welsenc.cfg  -numl 1	  -frms -1     \
@@ -70,7 +69,9 @@ runTest_openh264()
 						-deblockIdc 0  -alphaOffset 0  \
                         -betaOffset 0  -aq 1 -thread 1 \
 					    -slcmd 0 0 -slcnum 0 0         \
-						-rc -1  -lqp  0 ${LayerQP}  "							
+						-rc -1  -lqp  0 ${LayerQP}\
+						-denois  0  -scene 0\
+						-bgd 0  -aq 0 "							
 	elif [[  "$Option" =  "MultiSlice"  ]]
 	then
 		EncoderCommand="welsenc.cfg  -numl 1	 -frms -1      \
@@ -86,20 +87,19 @@ runTest_openh264()
                         -slcmd 0 1 -slcnum 0 4         \
 						-threadIdc 4                   \
 						-rc 1 -tarb  ${TargetBR}       \
-						-ltarb 0 ${TargetBR}"
+						-ltarb 0 ${TargetBR}  \
+						-denois  0  -scene 0\
+						-bgd 0  -aq 0 "
 	else
 		echo "encoder option is not right--BR---QP only!"
 		exit 1
 	fi
-
-
 	echo "input yuv is ${InputYUV}"
 	echo "Target BitRate is ${TargetBR} "
 	echo ""
 	echo ${EncoderCommand}
 	./h264enc ${EncoderCommand} >${LogFile}
 }
-
 Option=$1
 InputYUV=$2
 OutputFile=$3

@@ -7,14 +7,12 @@ runCheckProfile()
 		echo  "usage: runCheckProfile \${profile} "
 		exit 1
 	fi
-
 	local ProfileName=$1
 	local Flag=""
 	local Profile=""
 	let "Flag=0"
 	declare -a aOptionList
 	aOptionList=(baseline main  high)
-
 	for Profile  in ${aOptionList[@]}
 	do
 		if [  ${ProfileName} =  ${Profile}   ]
@@ -22,7 +20,6 @@ runCheckProfile()
 			let "Flag=1"
 		fi
 	done
-
 	if [ ${Flag}  -eq 0 ]
 	then
 		echo "profile name is not right"
@@ -38,14 +35,12 @@ runCheckSpeed()
 		echo  "usage runCheckProfile \${profile} "
 		exit 1
 	fi
-
 	local SpeedName=$1
 	local Flag=""
 	local Speed="" 
 	let "Flag=0"
 	declare -a aOptionList
 	aOptionList=(superfast veryfast faster fast medium slow veryslow)
-
 	for Speed  in ${aOptionList[@]}
 	do
 		if [  ${SpeedName} =  ${Speed}   ]
@@ -53,7 +48,6 @@ runCheckSpeed()
 			let "Flag=1"
 		fi
 	done
-
 	if [ ${Flag}  -eq 0 ]
 	then
 		echo "Speed  name is not right"
@@ -82,7 +76,6 @@ runTest_x264_BR()
 	local LogFile=$6
 	runCheckProfile  ${Profile}
 	runCheckSpeed    ${Speed}
-
 	#get YUV detail info $picW $picH $FPS
 	local PicW=""
 	local PicH=""
@@ -93,7 +86,6 @@ runTest_x264_BR()
 	PicW=${aYUVInfo[0]}
 	PicH=${aYUVInfo[1]}
 	FPS=${aYUVInfo[2]}
-
 	if [ $PicW -eq 0  ]
 	then 
 		echo "Picture info is not right "
@@ -103,7 +95,6 @@ runTest_x264_BR()
 	then 		
 		let "FPS=30"
 	fi
-
 	local EncoderCommand="--profile ${Profile} \
 				--keyint infinite      \
 				--preset ${Speed}      \
@@ -116,14 +107,12 @@ runTest_x264_BR()
 				--fps  ${FPS}          \
 				-o ${OutputFile}       \
 				${InputYUV}"
-
+				
 	echo ""
 	echo ${EncoderCommand}
 	echo ""
-
 	./x264 ${EncoderCommand} 2>${LogFile}
 }
-
 #usage
 #runTest_x264_QP ${profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
 runTest_x264_QP()
@@ -144,7 +133,6 @@ runTest_x264_QP()
 	local LogFile=$6
 	runCheckProfile  ${Profile}
 	runCheckSpeed    ${Speed}
-
 	#get YUV detail info $picW $picH $FPS
 	local PicW=""
 	local PicH=""
@@ -155,7 +143,6 @@ runTest_x264_QP()
 	PicW=${aYUVInfo[0]}
 	PicH=${aYUVInfo[1]}
 	FPS=${aYUVInfo[2]}
-
 	if [ $PicW -eq 0  ]
 	then 
 		echo "Picture info is not right "
@@ -165,7 +152,6 @@ runTest_x264_QP()
 	then 		
 		let "FPS=30"
 	fi
-
 	local EncoderCommand="--profile ${Profile}     \
 				--preset ${Speed}      \
 				--keyint infinite      \
@@ -177,16 +163,11 @@ runTest_x264_QP()
 				--fps  ${FPS}          \
 				-o ${OutputFile}       \
 				${InputYUV}"
-
 	echo ""
 	echo ${EncoderCommand}
 	echo ""
-
 	./x264 ${EncoderCommand} 2>${LogFile}
 }
-
-
-
 #usage: runTest_x264_Index1 ${profile} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
 runTest_x264_Index1()
 {
@@ -204,7 +185,6 @@ runTest_x264_Index1()
 	local BitRate=$4
 	local LogFile=$5
 	runCheckProfile  ${Profile}
-
 	#get YUV detail info $picW $picH $FPS
 	local PicW=""
 	local PicH=""
@@ -215,7 +195,6 @@ runTest_x264_Index1()
 	PicW=${aYUVInfo[0]}
 	PicH=${aYUVInfo[1]}
 	FPS=${aYUVInfo[2]}
-
 	if [ $PicW -eq 0  ]
 	then 
 		echo "Picture info is not right "
@@ -227,10 +206,10 @@ runTest_x264_Index1()
 	fi
     # --rc-lookahead 25  veryfast<speed<faster
 	local EncoderCommand="--profile ${Profile}    \
-				--no-mixed-refs  --ref 4 \
+				--no-mixed-refs --rc-lookahead 10 \
+				--ref 4 \
 				--psnr  --no-psy \
-				--rc-lookahead 15 \
-                --me hex --subme 7	   \
+                --me dia --subme 2	   \
 				--aq-mode 0    \
 				--slices 1 --threads 1 \
 				--bitrate ${BitRate}   \
@@ -238,14 +217,11 @@ runTest_x264_Index1()
 				--fps  ${FPS}          \
 				-o ${OutputFile}       \
 				${InputYUV}"
-
 	echo ""
 	echo ${EncoderCommand}
 	echo ""
-
 	./x264 ${EncoderCommand} 2>${LogFile}
 }
-
 #usage: runTest_x264_Index2 ${profile} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
 runTest_x264_Index2()
 {
@@ -263,7 +239,6 @@ runTest_x264_Index2()
 	local QP=$4
 	local LogFile=$5
 	runCheckProfile  ${Profile}
-
 	#get YUV detail info $picW $picH $FPS
 	local PicW=""
 	local PicH=""
@@ -274,7 +249,6 @@ runTest_x264_Index2()
 	PicW=${aYUVInfo[0]}
 	PicH=${aYUVInfo[1]}
 	FPS=${aYUVInfo[2]}
-
 	if [ $PicW -eq 0  ]
 	then 
 		echo "Picture info is not right "
@@ -286,10 +260,10 @@ runTest_x264_Index2()
 	fi
     # --rc-lookahead 25  veryfast<speed<faster
 	local EncoderCommand="--profile ${Profile}  \
-				--no-mixed-refs  --ref 4 \
+				--no-mixed-refs --rc-lookahead 10 \
+				--ref 4 \
 				--psnr  --no-psy \
-				--rc-lookahead 15 \
-                --me hex --subme 7	   \
+                --me dia --subme 2	   \
 				--aq-mode 0   \
 				--slices 1 --threads 1 \
 				--qp ${QP}             \
@@ -300,11 +274,8 @@ runTest_x264_Index2()
 	echo ""
 	echo ${EncoderCommand}
 	echo ""
-
 	./x264 ${EncoderCommand} 2>${LogFile}
 }
-
-
 #usage: runMain  ${TestIndex}  ${profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate} ${QP}  ${LogFile}
 runMain()
 {
@@ -313,7 +284,6 @@ runMain()
 		echo  "runMain  \${TestIndex} \${profile}  \${Speed} \${InputYUV} \${OutputFile}  \${BitRate}  \${QP} \${LogFile}"
 		return 1
 	fi
-
 	local TestIndex=$1
 	local Profile=$2
 	local Speed=$3
@@ -322,12 +292,10 @@ runMain()
 	local BitRate=$6
 	local QP=$7
 	local LogFile=$8
-
 	if [ ${TestIndex} -eq 0  ]
 	then
 		runTest_x264_BR  ${Profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
 	fi
-
 	if [ ${TestIndex} -eq 1  ]
 	then
 		runTest_x264_QP  ${Profile}  ${Speed}   ${InputYUV} ${OutputFile}  ${QP}    ${LogFile}
@@ -338,14 +306,11 @@ runMain()
 	then
 		runTest_x264_Index1  ${Profile}  ${InputYUV} ${OutputFile}  ${BitRate}   ${LogFile}
 	fi
-
 	if [ ${TestIndex} -eq 3  ]
 	then
 		runTest_x264_Index2  ${Profile}  ${InputYUV} ${OutputFile}  ${QP}   ${LogFile}
 	fi	
-
 }
-
 TestIndex=$1
 Profile=$2
 Speed=$3
@@ -355,4 +320,5 @@ BitRate=$6
 QP=$7
 LogFile=$8
 runMain   ${TestIndex}  ${Profile}  ${Speed} ${InputYUV} ${OutputFile}  ${BitRate}  ${QP} ${LogFile}
+
 
