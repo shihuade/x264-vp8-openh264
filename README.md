@@ -9,3 +9,9 @@ x264-vp8-openh264
       #define FRAME_INFO_OUTPUT
       #define STAT_OUTPUT
       #define ENABLE_PSNR_CALC
+
+Usage:
+-----
+- ./run_Main.sh  YUV.cfg  YUVDir
+-     (script will search YUV file under given YUVDir)
+-     AllTestSequence.csv contain all YUV test data like psnr, bit rate, fps and encoder time.
