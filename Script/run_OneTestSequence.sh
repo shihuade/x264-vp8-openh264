@@ -148,20 +148,20 @@ runMain()
 		echo ""
 		echo "X264  baseline  faster QP....."
 		echo ""
-		TempX264Perf=`runTest_X264  1  baseline  veryfast  ${InputYUV}   ${TargetBitRate} ${QP}  `
+		TempX264Perf=`runTest_X264  1  baseline  faster   ${InputYUV}   ${TargetBitRate} ${QP}  `
 		X264PerfInfo="${X264PerfInfo},  ,${TempX264Perf}"
 		echo "TempX264Perf is ${TempX264Perf}"
 		
 		echo ""
 		echo "X264  baseline  BR index=1...."
 		echo ""
-		TempX264Perf=`runTest_X264  2  baseline  faster  ${InputYUV}   ${TargetBitRate} ${QP}  `
+		TempX264Perf=`runTest_X264  1  baseline  veryfast  ${InputYUV}   ${TargetBitRate} ${QP}  `
 		X264PerfInfo="${X264PerfInfo},  ,${TempX264Perf}"
 		echo "TempX264Perf is ${TempX264Perf}"
 		echo ""
 		echo "X264  baseline  QP index=2...."
 		echo ""
-		TempX264Perf=`runTest_X264  3  baseline  faster  ${InputYUV}  ${TargetBitRate}  ${QP}  `
+		TempX264Perf=`runTest_X264  1  baseline  superfast  ${InputYUV}  ${TargetBitRate}  ${QP}  `
 		X264PerfInfo="${X264PerfInfo},  ,${TempX264Perf}"
 		echo "TempX264Perf is ${TempX264Perf}"		
 			

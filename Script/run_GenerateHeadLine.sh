@@ -1,5 +1,4 @@
 
-
 #!/bin/bash
 #usage: runGenerateHeadLine ${FinalResultFile} 
 runGenerateHeadLine()
@@ -15,7 +14,7 @@ runGenerateHeadLine()
 	local HeadLineOpenh264_1="TestSequence, openh264QP ,  ,      ,       ,   ,   , , openh264BR,  ,       ,      ,   ,   ,"
 	local HeadLineOpenh264_2="            , BR,     PSNR_Y, PSNR_U,PSNR_V,FPS, ET, , BR,    PSNR_Y, PSNR_U,PSNR_V,FPS, ET,"
 	
-	local HeadLineX264_1="X264_Baseline_BR,  ,  ,  ,   ,   ,  X264_Baseline_QP,  ,  ,  ,    ,  ,  X264_Baseline_BR,  ,  ,  ,    ,   ,  X264_Baseline_QP,  ,  ,  ,    ,  "
+	local HeadLineX264_1="X264_Baseline_BR,  ,  ,  ,   ,   , X264_Baseline_faster_QP,  ,  ,  ,    ,  ,  X264_Baseline_veryfast_QP,  ,  ,  ,    ,   ,  X264_Baseline_superfaster_QP,  ,  ,  ,    ,  "
 	local HeadLineX264_2="BR, PSNR_Y,PSNR_U,PSNR_V,	FPS,   ,  BR, PSNR_Y,PSNR_U,PSNR_V,  FPS,  ,  BR, PSNR_Y,PSNR_U,PSNR_V,  FPS,   ,  BR, PSNR_Y,PSNR_U,PSNR_V,   FPS,"
 	
 	
