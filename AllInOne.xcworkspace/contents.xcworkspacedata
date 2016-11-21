@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <Group
+      location = "group:Codec"
+      name = "Codec">
+      <FileRef
+         location = "group:h264dec">
+      </FileRef>
+      <FileRef
+         location = "group:h264enc">
+      </FileRef>
+      <FileRef
+         location = "group:JMDecoder_15.4">
+      </FileRef>
+      <FileRef
+         location = "group:layer2.cfg">
+      </FileRef>
+      <FileRef
+         location = "group:PSNRStatic">
+      </FileRef>
+      <FileRef
+         location = "group:vpxdec">
+      </FileRef>
+      <FileRef
+         location = "group:vpxenc">
+      </FileRef>
+      <FileRef
+         location = "group:welsenc.cfg">
+      </FileRef>
+      <FileRef
+         location = "group:x264">
+      </FileRef>
+      <FileRef
+         location = "group:x264.usage">
+      </FileRef>
+   </Group>
+   <Group
+      location = "group:Script"
+      name = "Script">
+      <FileRef
+         location = "group:run_AllTestSequence.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_GenerateHeadLine.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_GetPerfInfo_openh264.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_GetPerfInfo_VP8.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_GetPerfInfo_X264.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_GetTargetBitRate.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_GetYUVPath.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_OneTestSequence.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_ParseYUVInfo.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_SafeDelete.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_TestOpenh264.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_TestVP8.sh">
+      </FileRef>
+      <FileRef
+         location = "group:run_TestX264.sh">
+      </FileRef>
+   </Group>
+   <FileRef
+      location = "group:AllTestSequence.csv">
+   </FileRef>
+   <FileRef
+      location = "group:README.md">
+   </FileRef>
+   <FileRef
+      location = "group:run_GetYUVNameList.sh">
+   </FileRef>
+   <FileRef
+      location = "group:run_Main.sh">
+   </FileRef>
+   <FileRef
+      location = "group:YUV.cfg">
+   </FileRef>
+</Workspace>
