@@ -7,3 +7,6 @@
 [submodule "JM"]
 	path = JM
 	url = https://github.com/shihuade/JM.git
+[submodule "libvpx"]
+	path = libvpx
+	url = https://github.com/shihuade/libvpx.git
